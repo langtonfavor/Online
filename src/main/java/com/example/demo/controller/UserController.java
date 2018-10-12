@@ -82,7 +82,7 @@ public class UserController {
 	public ModelAndView accessDenied() {
 		ModelAndView model = new ModelAndView();
 
-		model.setViewName("access_denied");
+		model.setViewName("errors/access_denied");
 		return model;
 	}
 }
