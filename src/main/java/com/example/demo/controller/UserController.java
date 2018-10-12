@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,12 +47,12 @@ public class UserController {
 
 		ModelAndView model = new ModelAndView();
 		User userExists = userService.findByEmail(user.getEmail());
-		
-		if(userExists!=null) {
+
+		if (userExists != null) {
 			bindingResult.rejectValue("email", "error.user", "email already exists");
-			
+
 		}
-		if(bindingResult.hasErrors()) {
+		if (bindingResult.hasErrors()) {
 			model.setViewName("user/signup");
 		} else {
 			userService.saveUser(user);
@@ -62,12 +64,25 @@ public class UserController {
 		return model;
 
 	}
-	@RequestMapping(value= {"/home/home"}, method= RequestMethod.GET)
+
+	@RequestMapping(value = { "/home/home" }, method = RequestMethod.GET)
 	public ModelAndView home() {
-		
+
 		ModelAndView model = new ModelAndView();
-		
-		return null;
-		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userService.findByEmail(auth.getName());
+
+		model.addObject("userName" + user.getUsername() + user.getName());
+		model.setViewName("home/home");
+		return model;
+
+	}
+
+	@RequestMapping(value = { "access_denied" }, method = RequestMethod.GET)
+	public ModelAndView accessDenied() {
+		ModelAndView model = new ModelAndView();
+
+		model.setViewName("access_denied");
+		return model;
 	}
 }
